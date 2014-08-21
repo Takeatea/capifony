@@ -154,12 +154,4 @@ namespace :deploy do
       run "#{try_sudo} rm -rf #{deploy_to}"
     end
   end
-
-  after "deploy:set_current_revision", do
-    if symfony_prefix_path.empty?
-      set :latest_release_symfony_path, "#{latest_release}"
-    else
-      set :latest_release_symfony_path, "#{latest_release}/#{symfony_prefix_path}"
-    end
-  end
 end

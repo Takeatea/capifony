@@ -9,6 +9,7 @@ describe "Capifony::Symfony2 - shared" do
 
     @configuration.set :application,          'test-app'
     @configuration.set :latest_release,       '/var/www/releases/20120927'
+    @configuration.set :latest_release_symfony_path, '/var/www/releases/20120927'
     @configuration.set :previous_release,     '/var/www/releases/20120920'
     @configuration.set :current_path,         '/var/www/current'
     @configuration.set :shared_path,          '/var/www/shared'

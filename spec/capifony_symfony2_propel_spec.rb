@@ -7,6 +7,7 @@ describe "Capifony::Symfony2 - propel" do
 
     # Common parameters
     @configuration.set :latest_release,       '/var/www/releases/20120927'
+    @configuration.set :latest_release_symfony_path, '/var/www/releases/20120927'
     @configuration.set :shared_path,          '/var/www/shared'
     @configuration.set :maintenance_basename, 'maintenance'
     @configuration.set :try_sudo,             ''

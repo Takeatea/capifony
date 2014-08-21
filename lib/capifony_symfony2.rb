@@ -344,6 +344,14 @@ module Capifony
           end
         end
 
+        after "deploy:set_current_revision" do
+          if symfony_prefix_path.empty?
+            set :latest_release_symfony_path, "#{latest_release}"
+          else
+            set :latest_release_symfony_path, "#{latest_release}/#{symfony_prefix_path}"
+          end
+        end
+
         after "deploy:create_symlink" do
           puts "--> Successfully deployed!".green
         end
