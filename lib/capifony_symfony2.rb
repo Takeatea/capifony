@@ -157,7 +157,7 @@ module Capifony
         end
 
         def guess_symfony_version
-          capture("cd #{latest_release} && #{php_bin} #{symfony_console} --version |cut -d \" \" -f 3")
+          capture("cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} --version |cut -d \" \" -f 3")
         end
 
         def remote_file_exists?(full_path)

@@ -21,36 +21,36 @@ namespace :symfony do
 
     desc "Generate model lib form and filters classes based on your schema"
     task :build_classes, :roles => :app, :except => { :no_release => true } do
-      run "#{try_sudo} #{php_bin} #{latest_release}/symfony propel:build --model --env=#{symfony_env_prod}"
-      run "#{try_sudo} #{php_bin} #{latest_release}/symfony propel:build --forms --env=#{symfony_env_prod}"
-      run "#{try_sudo} #{php_bin} #{latest_release}/symfony propel:build --filters --env=#{symfony_env_prod}"
+      run "#{try_sudo} #{php_bin} #{latest_release_symfony_path}/symfony propel:build --model --env=#{symfony_env_prod}"
+      run "#{try_sudo} #{php_bin} #{latest_release_symfony_path}/symfony propel:build --forms --env=#{symfony_env_prod}"
+      run "#{try_sudo} #{php_bin} #{latest_release_symfony_path}/symfony propel:build --filters --env=#{symfony_env_prod}"
     end
 
     desc "Generate code & database based on your schema"
     task :build_all, :roles => :app, :except => { :no_release => true } do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database? (y/N)")
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony propel:build --sql --db --no-confirmation --env=#{symfony_env_prod}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} ./symfony propel:build --sql --db --no-confirmation --env=#{symfony_env_prod}'"
       end
     end
 
     desc "Generate code & database based on your schema & load fixtures"
     task :build_all_and_load, :roles => :app, :except => { :no_release => true } do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database and load #{symfony_env_prod}'s fixtures? (y/N)")
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env_prod}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} ./symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env_prod}'"
       end
     end
 
     desc "Generate sql & database based on your schema"
     task :build_db, :roles => :app, :except => { :no_release => true } do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database? (y/N)")
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony propel:build --sql --db --no-confirmation --env=#{symfony_env_prod}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} ./symfony propel:build --sql --db --no-confirmation --env=#{symfony_env_prod}'"
       end
     end
 
     desc "Generate sql & database based on your schema & load fixtures"
     task :build_db_and_load, :roles => :app, :except => { :no_release => true } do
       if Capistrano::CLI.ui.agree("Do you really want to rebuild #{symfony_env_prod}'s database and load #{symfony_env_prod}'s fixtures? (y/N)")
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} ./symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env_prod}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} ./symfony propel:build --sql --db --and-load --no-confirmation --env=#{symfony_env_prod}'"
       end
     end
   end

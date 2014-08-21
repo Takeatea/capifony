@@ -43,14 +43,14 @@ namespace :deploy do
     DESC
     task :disable, :roles => :web, :except => { :no_release => true } do
       require 'erb'
-      on_rollback { run "rm #{latest_release}/#{web_path}/#{maintenance_basename}.html" }
+      on_rollback { run "rm #{latest_release_symfony_path}/#{web_path}/#{maintenance_basename}.html" }
 
       reason   = ENV['REASON']
       deadline = ENV['UNTIL']
       template = File.read(maintenance_template_path)
       result   = ERB.new(template).result(binding)
 
-      put result, "#{latest_release}/#{web_path}/#{maintenance_basename}.html", :mode => 0644
+      put result, "#{latest_release_symfony_path}/#{web_path}/#{maintenance_basename}.html", :mode => 0644
     end
 
     desc <<-DESC
@@ -60,7 +60,7 @@ namespace :deploy do
       web-accessible again.
     DESC
     task :enable, :roles => :web, :except => { :no_release => true } do
-      run "#{try_sudo} rm -f #{latest_release}/#{web_path}/#{maintenance_basename}.html"
+      run "#{try_sudo} rm -f #{latest_release_symfony_path}/#{web_path}/#{maintenance_basename}.html"
     end
   end
 end

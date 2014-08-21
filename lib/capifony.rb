@@ -9,6 +9,9 @@ set :php_bin,           "php"
 
 set :remote_tmp_dir,    "/tmp"
 
+# If the symfony project is not at the root, override this value
+set :symfony_prefix_path, ""
+
 def prompt_with_default(var, default, &block)
   set(var) do
     Capistrano::CLI.ui.ask("#{var} [#{default}] : ", &block)

@@ -12,7 +12,7 @@ namespace :deploy do
         if shared_children && shared_children.include?(link)
           absolute_link = shared_path + "/" + link
         else
-          absolute_link = latest_release + "/" + link
+          absolute_link = latest_release_symfony_path + "/" + link
         end
 
         dirs << absolute_link
@@ -94,13 +94,13 @@ namespace :deploy do
 
   desc "Updates latest release source path"
   task :finalize_update, :roles => :app, :except => { :no_release => true } do
-    run "#{try_sudo} chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
+    run "#{try_sudo} chmod -R g+w #{latest_release_symfony_path}" if fetch(:group_writable, true)
 
     capifony_pretty_print "--> Creating cache directory"
 
-    run "#{try_sudo} sh -c 'if [ -d #{latest_release}/#{cache_path} ] ; then rm -rf #{latest_release}/#{cache_path}; fi'"
-    run "#{try_sudo} sh -c 'mkdir -p #{latest_release}/#{cache_path} && chmod -R 0777 #{latest_release}/#{cache_path}'"
-    run "#{try_sudo} chmod -R g+w #{latest_release}/#{cache_path}"
+    run "#{try_sudo} sh -c 'if [ -d #{latest_release_symfony_path}/#{cache_path} ] ; then rm -rf #{latest_release_symfony_path}/#{cache_path}; fi'"
+    run "#{try_sudo} sh -c 'mkdir -p #{latest_release_symfony_path}/#{cache_path} && chmod -R 0777 #{latest_release_symfony_path}/#{cache_path}'"
+    run "#{try_sudo} chmod -R g+w #{latest_release_symfony_path}/#{cache_path}"
 
     capifony_puts_ok
 
@@ -108,7 +108,7 @@ namespace :deploy do
 
     if fetch(:normalize_asset_timestamps, true)
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
-      asset_paths = asset_children.map { |p| "#{latest_release}/#{p}" }.join(" ")
+      asset_paths = asset_children.map { |p| "#{latest_release_symfony_path}/#{p}" }.join(" ")
 
       if asset_paths.chomp.empty?
         puts "    No asset paths found, skipped".yellow
@@ -134,7 +134,7 @@ namespace :deploy do
   task :test_all, :roles => :app, :except => { :no_release => true } do
     update_code
     create_symlink
-    run "#{try_sudo} sh -c 'cd #{latest_release} && phpunit -c #{app_path} src'"
+    run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && phpunit -c #{app_path} src'"
   end
 
   desc "Runs the Symfony2 migrations"
@@ -152,6 +152,14 @@ namespace :deploy do
   task :drop do
     if Capistrano::CLI.ui.ask("Are you sure remove #{deploy_to} (y/n)") == 'y'
       run "#{try_sudo} rm -rf #{deploy_to}"
+    end
+  end
+
+  after "deploy:set_current_revision", do
+    if symfony_prefix_path.empty?
+      set :latest_release_symfony_path, "#{latest_release}"
+    else
+      set :latest_release_symfony_path, "#{latest_release}/#{symfony_prefix_path}"
     end
   end
 end

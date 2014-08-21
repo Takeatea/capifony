@@ -25,16 +25,16 @@ namespace :deploy do
 
   desc "Customize the finalize_update task to work with symfony."
   task :finalize_update, :roles => :app, :except => { :no_release => true } do
-    run "#{try_sudo} chmod -R g+w #{latest_release}" if fetch(:group_writable, true)
-    run "#{try_sudo} mkdir -p #{latest_release}/cache"
-    run "#{try_sudo} chmod -R g+w #{latest_release}/cache"
+    run "#{try_sudo} chmod -R g+w #{latest_release_symfony_path}" if fetch(:group_writable, true)
+    run "#{try_sudo} mkdir -p #{latest_release_symfony_path}/cache"
+    run "#{try_sudo} chmod -R g+w #{latest_release_symfony_path}/cache"
 
     # Share common files & folders
     share_childs
 
     if fetch(:normalize_asset_timestamps, true)
       stamp = Time.now.utc.strftime("%Y%m%d%H%M.%S")
-      asset_paths = asset_children.map { |p| "#{latest_release}/#{p}" }.join(" ")
+      asset_paths = asset_children.map { |p| "#{latest_release_symfony_path}/#{p}" }.join(" ")
       run "#{try_sudo} find #{asset_paths} -exec touch -t #{stamp} {} ';'; true", :env => { "TZ" => "UTC" }
     end
   end

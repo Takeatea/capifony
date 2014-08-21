@@ -11,7 +11,7 @@ namespace :symfony do
             flush_option = ""
         end
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-metadata #{console_options}#{doctrine_em_flag}#{flush_option}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:cache:clear-metadata #{console_options}#{doctrine_em_flag}#{flush_option}'"
         capifony_puts_ok
       end
 
@@ -25,7 +25,7 @@ namespace :symfony do
             flush_option = ""
         end
         
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-query #{console_options}#{doctrine_em_flag}#{flush_option}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:cache:clear-query #{console_options}#{doctrine_em_flag}#{flush_option}'"
         capifony_puts_ok
       end
 
@@ -39,7 +39,7 @@ namespace :symfony do
             flush_option = ""
         end
         
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:cache:clear-result #{console_options}#{doctrine_em_flag}#{flush_option}'"
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:cache:clear-result #{console_options}#{doctrine_em_flag}#{flush_option}'"
         capifony_puts_ok
       end
     end
@@ -50,7 +50,7 @@ namespace :symfony do
         capifony_pretty_print "--> Dropping databases"
 
         if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to drop #{symfony_env_prod}'s database? (y/N)")
-          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:drop --force #{console_options}'", :once => true
+          run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:database:drop --force #{console_options}'", :once => true
         end
         capifony_puts_ok
       end
@@ -59,7 +59,7 @@ namespace :symfony do
       task :create, :roles => :app, :except => { :no_release => true } do
         capifony_pretty_print "--> Creating databases"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:database:create #{console_options}'", :once => true
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:database:create #{console_options}'", :once => true
         capifony_puts_ok
       end
     end
@@ -69,7 +69,7 @@ namespace :symfony do
       task :create, :roles => :app, :except => { :no_release => true } do
         capifony_pretty_print "--> Creating schema"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:create #{console_options}#{doctrine_em_flag}'", :once => true
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:schema:create #{console_options}#{doctrine_em_flag}'", :once => true
         capifony_puts_ok
       end
 
@@ -78,7 +78,7 @@ namespace :symfony do
         capifony_pretty_print "--> Droping schema"
 
         if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to drop #{symfony_env_prod}'s database schema? (y/N)")
-          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:drop --force #{console_options}#{doctrine_em_flag}'", :once => true
+          run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:schema:drop --force #{console_options}#{doctrine_em_flag}'", :once => true
         end
         capifony_puts_ok
       end
@@ -87,7 +87,7 @@ namespace :symfony do
       task :update, :roles => :app, :except => { :no_release => true } do
         capifony_pretty_print "--> Updating schema"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:schema:update --force #{console_options}#{doctrine_em_flag}'", :once => true
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:schema:update --force #{console_options}#{doctrine_em_flag}'", :once => true
         capifony_puts_ok
       end
     end
@@ -95,7 +95,7 @@ namespace :symfony do
     desc "Load data fixtures"
     task :load_fixtures, :roles => :app, :except => { :no_release => true } do
       if !interactive_mode || Capistrano::CLI.ui.agree("Careful, database will be purged. Do you want to continue? (Y/N)")
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:fixtures:load --no-interaction #{console_options}#{doctrine_em_flag}'", :once => true
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:fixtures:load --no-interaction #{console_options}#{doctrine_em_flag}'", :once => true
       end
       capifony_puts_ok
     end
@@ -104,7 +104,7 @@ namespace :symfony do
       desc "Executes a migration to a specified version or the latest available version"
       task :migrate, :roles => :app, :only => { :primary => true }, :except => { :no_release => true } do
         currentVersion = nil
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} --no-ansi doctrine:migrations:status #{console_options}#{doctrine_em_flag}'", :once => true do |ch, stream, out|
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} --no-ansi doctrine:migrations:status #{console_options}#{doctrine_em_flag}'", :once => true do |ch, stream, out|
           if stream == :out and out =~ /Current Version:.+\(([\w]+)\)/
             currentVersion = Regexp.last_match(1)
           end
@@ -120,18 +120,18 @@ namespace :symfony do
 
         on_rollback {
           if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database back to version #{currentVersion}? (y/N)")
-            run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} #{console_options} --no-interaction#{doctrine_em_flag}'", :once => true
+            run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:migrations:migrate #{currentVersion} #{console_options} --no-interaction#{doctrine_em_flag}'", :once => true
           end
         }
 
         if !interactive_mode || Capistrano::CLI.ui.agree("Do you really want to migrate #{symfony_env_prod}'s database? (y/N)")
-          run "#{try_sudo} sh -c ' cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:migrate #{console_options} --no-interaction#{doctrine_em_flag}'", :once => true
+          run "#{try_sudo} sh -c ' cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:migrations:migrate #{console_options} --no-interaction#{doctrine_em_flag}'", :once => true
         end
       end
 
       desc "Views the status of a set of migrations"
       task :status, :roles => :app, :except => { :no_release => true } do
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:migrations:status #{console_options}#{doctrine_em_flag}'", :once => true
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:migrations:status #{console_options}#{doctrine_em_flag}'", :once => true
       end
     end
 
@@ -142,7 +142,7 @@ namespace :symfony do
           task action, :roles => :app, :except => { :no_release => true } do
             capifony_pretty_print "--> Executing MongoDB schema #{action.to_s}"
 
-            run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:#{action.to_s} #{console_options}'", :once => true
+            run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:#{action.to_s} #{console_options}'", :once => true
             capifony_puts_ok
           end
         end
@@ -153,7 +153,7 @@ namespace :symfony do
             task action, :roles => :app do
               capifony_pretty_print "--> Executing MongoDB indexes #{action.to_s}"
 
-              run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:#{action.to_s} --index #{console_options}'", :once => true
+              run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:mongodb:schema:#{action.to_s} --index #{console_options}'", :once => true
               capifony_puts_ok
             end
           end
@@ -163,7 +163,7 @@ namespace :symfony do
       desc "Load data fixtures"
       task :load_fixtures, :roles => :app, :except => { :no_release => true } do
         if !interactive_mode || Capistrano::CLI.ui.agree("Careful, database will be purged. Do you want to continue? (Y/N)")
-          run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} doctrine:mongodb:fixtures:load --no-interaction #{console_options}'", :once => true
+          run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} doctrine:mongodb:fixtures:load --no-interaction #{console_options}'", :once => true
         end
         capifony_puts_ok
       end
@@ -174,7 +174,7 @@ namespace :symfony do
       task :acl, :roles => :app, :except => { :no_release => true } do
         capifony_pretty_print "--> Mounting Doctrine ACL tables"
 
-        run "#{try_sudo} sh -c 'cd #{latest_release} && #{php_bin} #{symfony_console} init:acl #{console_options}'", :once => true
+        run "#{try_sudo} sh -c 'cd #{latest_release_symfony_path} && #{php_bin} #{symfony_console} init:acl #{console_options}'", :once => true
         capifony_puts_ok
       end
     end

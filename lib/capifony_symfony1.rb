@@ -50,7 +50,7 @@ def guess_symfony_orm
 end
 
 def guess_symfony_lib
-  symfony_version = capture("cd #{latest_release} && #{php_bin} ./symfony -V")
+  symfony_version = capture("cd #{latest_release_symfony_path} && #{php_bin} ./symfony -V")
 
   /\((.*)\)/.match(symfony_version)[1]
 end
